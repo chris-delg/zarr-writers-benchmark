@@ -1,3 +1,3 @@
 [submodule "acquire-zarr"]
-	path = acquire-zarr
+	path = external/acquire-zarr
 	url = git@github.com:acquire-project/acquire-zarr.git
