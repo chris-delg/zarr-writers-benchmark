@@ -11,10 +11,11 @@ class Benchmark:
         self.__chunks = chunks
         self.__average_bandwidth = {}
         self.__zarr_writers = {
-            "TensorStore" : Tensorstore(),
-            "Zarr Python" : Zarr_Python(),
-            "OME Zarr"    : Ome_Zarr(),
-            "Cpp Zarr"    : Cpp_Zarr()
+            "TensorStore"  : Tensorstore(),
+            "Zarr Python"  : Zarr_Python(),
+            "OME Zarr"     : Ome_Zarr(),
+            "Cpp Zarr"     : Cpp_Zarr(),
+            "Acquire Zarr" : AcquireZarr()
         }
         
     
@@ -81,7 +82,7 @@ class Benchmark:
                     continue 
                 
                 # store time taken to write zarr
-                if lib_name == "TensorStore" or lib_name == "Zarr Python":
+                if lib_name in ("TensorStore", "ZarrPython", "Acquire Zarr"):
                     total_time = writer.write_zarr(shape=new_shape, chunks=self.chunks, zarr_data=zarr_data)
                 elif lib_name == "OME Zarr":
                     total_time = writer.write_zarr(chunks=self.chunks, zarr_data=zarr_data)

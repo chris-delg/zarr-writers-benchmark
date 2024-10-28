@@ -18,7 +18,7 @@ echo "Directory '$BUILD_DIR' has been created successfully."
 
 # build cpp code 
 cd "$BUILD_DIR" || { echo "Failed to change directory to '$BUILD_DIR'"; exit 1; }
-cmake .. || { echo "Failed to run cmake '$BUILD_DIR'"; exit 1; }
+cmake --preset=default .. || { echo "Failed to run cmake '$BUILD_DIR'"; exit 1; }
 make || { echo "Failed to run make"; exit 1; }
 
 echo "Build process completed successfully."
