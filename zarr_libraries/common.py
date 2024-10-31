@@ -3,6 +3,8 @@ import os
 
 # getting size of zarr folder recursively 
 def folder_size_in_bytes(folder: str) -> int:
+    if not os.path.exists(folder):
+        return 0
     total_size = os.path.getsize(folder)
     
     for item in os.listdir(folder):

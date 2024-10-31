@@ -7,10 +7,14 @@ import time
 
 class AcquireZarr:
     def __init__(self) -> None:
+        aqz.set_log_level(aqz.LogLevel.Error)
         base_dir = Path(__file__).parent
         self.__path_to_data = (
             base_dir / "example_data" / "acquire_zarr_data" / "test.zarr"
         ).resolve()
+
+        if not self.__path_to_data.parent.exists():
+            self.__path_to_data.parent.mkdir(parents=True)
 
     @property
     def data_path(self) -> str:
@@ -22,7 +26,8 @@ class AcquireZarr:
         settings.compression = aqz.CompressionSettings(
             compressor=aqz.Compressor.BLOSC1,
             codec=aqz.CompressionCodec.BLOSC_LZ4,
-            level=1
+            level=1,
+            shuffle=0
         )
         settings.data_type=aqz.DataType.UINT8
         settings.dimensions.extend(
