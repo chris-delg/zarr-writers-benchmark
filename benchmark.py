@@ -82,7 +82,7 @@ class Benchmark:
                     continue 
                 
                 # store time taken to write zarr
-                if lib_name in ("TensorStore", "ZarrPython", "Acquire Zarr"):
+                if lib_name in ("TensorStore", "Zarr Python", "Acquire Zarr"):
                     total_time = writer.write_zarr(shape=new_shape, chunks=self.chunks, zarr_data=zarr_data)
                 elif lib_name == "OME Zarr":
                     total_time = writer.write_zarr(chunks=self.chunks, zarr_data=zarr_data)
