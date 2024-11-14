@@ -11,10 +11,11 @@ class Benchmark:
         self.__chunks = chunks
         self.__average_bandwidth = {}
         self.__zarr_writers = {
-            "TensorStore" : Tensorstore(),
-            "Zarr Python" : Zarr_Python(),
-            "OME Zarr"    : Ome_Zarr(),
-            "Cpp Zarr"    : Cpp_Zarr()
+            "TensorStore"  : Tensorstore(),
+            "Zarr Python"  : Zarr_Python(),
+            "OME Zarr"     : Ome_Zarr(),
+            "Cpp Zarr"     : Cpp_Zarr(),
+            "Acquire Zarr" : AcquireZarr()
         }
         
     
@@ -46,7 +47,7 @@ class Benchmark:
                         avg_graph: Optional[matplotlib.axes._axes.Axes] = None) -> None:
         
         # error checking to see if chosen lib exists in test
-        if choose_lib != None and choose_lib not in set(self.__zarr_writers.keys()):
+        if choose_lib is not None and choose_lib not in set(self.__zarr_writers.keys()):
             raise ValueError(f"There is no library of name \"{choose_lib}\".") 
         
         gb_in_bytes = 1073741824         # represents number of bytes in a GB
@@ -77,11 +78,11 @@ class Benchmark:
                     shutil.rmtree(writer.data_path)
                     
                 # if a specified library is chosen for testing, skip any that isn't that test
-                if choose_lib != None and choose_lib != lib_name: 
+                if choose_lib is not None and choose_lib != lib_name: 
                     continue 
                 
                 # store time taken to write zarr
-                if lib_name == "TensorStore" or lib_name == "Zarr Python":
+                if lib_name in ("TensorStore", "Zarr Python", "Acquire Zarr"):
                     total_time = writer.write_zarr(shape=new_shape, chunks=self.chunks, zarr_data=zarr_data)
                 elif lib_name == "OME Zarr":
                     total_time = writer.write_zarr(chunks=self.chunks, zarr_data=zarr_data)
@@ -102,7 +103,7 @@ class Benchmark:
         # plot the data and clean up the folders
         for lib_name, writer in self.__zarr_writers.items():
             # if a specified library is chosen for testing, skip any that isn't that test
-            if choose_lib != None and choose_lib != lib_name: 
+            if choose_lib is not None and choose_lib != lib_name: 
                 continue 
             
             # cleans up data left behind
@@ -125,11 +126,11 @@ class Benchmark:
                         avg_graph: Optional[matplotlib.axes._axes.Axes] = None) -> None:
         
         # error checking to see if chosen lib exists in test
-        if choose_lib != None and choose_lib not in set(self.__zarr_writers.keys()):
+        if choose_lib is not None and choose_lib not in set(self.__zarr_writers.keys()):
             raise ValueError(f"There is no library of name \"{choose_lib}\".") 
         
         # these are the only libraries that allow for appending of data
-        if choose_lib != None and choose_lib != "TensorStore" and choose_lib != "Zarr Python":
+        if choose_lib is not None and choose_lib != "TensorStore" and choose_lib != "Zarr Python":
             return
         
         gb_in_bytes = 1073741824         # represents number of bytes in a GB
@@ -157,7 +158,7 @@ class Benchmark:
             
             for lib_name, writer in self.__zarr_writers.items():    
                 # if a specified library is chosen for testing, skip any that isn't that test
-                if choose_lib != None and choose_lib != lib_name: 
+                if choose_lib is not None and choose_lib != lib_name: 
                     continue 
                 
                 # store time taken to append data
@@ -184,7 +185,7 @@ class Benchmark:
                 continue
             
             # if a specified library is chosen for testing, skip any that isn't that test
-            if choose_lib != None and choose_lib != lib_name: 
+            if choose_lib is not None and choose_lib != lib_name: 
                 continue 
             
             shutil.rmtree(writer.data_path) 
@@ -204,7 +205,7 @@ class Benchmark:
                       append_graph: Optional[matplotlib.axes._axes.Axes] = None, append_avg_graph: Optional[matplotlib.axes._axes.Axes] = None,
                       write_graph: Optional[matplotlib.axes._axes.Axes] = None, write_avg_graph: Optional[matplotlib.axes._axes.Axes] = None) -> None:
         
-        self.run_append_tests(num_of_gigabytes=append_test_gigabytes, show_results=False, choose_lib=choose_lib, graph=append_graph, avg_graph=append_avg_graph)
         self.run_write_tests(num_of_gigabytes=write_test_gigabytes, show_results=False, choose_lib=choose_lib, graph=write_graph, avg_graph=write_avg_graph)
+        self.run_append_tests(num_of_gigabytes=append_test_gigabytes, show_results=False, choose_lib=choose_lib, graph=append_graph, avg_graph=append_avg_graph)
         self.__print_results(additional_info=(f"Write Test GB Soft Cap: {write_test_gigabytes}GB | Append Test GB Soft Cap: {append_test_gigabytes}GB"))
     
